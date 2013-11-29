@@ -14,7 +14,7 @@ const int dataPin = 8;
 // number of elements should be multipe of 8, representing a frame in the animation
 // each pair of bytes controls a layer
 byte frames[] = {
-  136, 136,  68,  68,  34,  34,  17,  17,
+  255, 255, 255, 255, 255, 255, 255, 255,
   136, 136, 136, 136, 136, 136, 136, 136,
    68,  68,  68,  68,  68,  68,  68,  68,
    34,  34,  34,  34,  34,  34,  34,  34,
@@ -24,7 +24,16 @@ byte frames[] = {
     0,   0, 255, 255,   0,   0,   0,   0,
     0,   0,   0,   0, 255, 255,   0,   0,
     0,   0,   0,   0,   0,   0, 255, 255,
+    0,   0,   0,   0,   0,   0, 240, 255,
+    0,   0,   0,   0,   0,   0,   0, 255,
+    0,   0,   0,   0,   0,   0,   0, 240,
+    0,   0,   0,   0,   0, 255,   0, 240,
+    0,   0, 240, 255,   0, 255,   0, 240,
+  255, 255, 240, 255,   0, 255,   0, 240
 };
+
+// 0->3 foor each axis
+byte xyz[3] = {0, 0, 0};
 
 void setup() {
   // set pins to output so you can control the shift register
@@ -34,11 +43,22 @@ void setup() {
 }
 
 void loop() {
+  playTheFrames();
+  walkingLED(xyz);
+}
+
+void playTheFrames() {
   //loop the data array forever
   int n = sizeof(frames)/sizeof(byte);
   for (int i = 0; i < n; i += 8) {
     showFrame(&frames[i]);
   }
+}
+
+void walkingLED(byte *xyz) {
+  // choose an axis
+  int now = random(0, 3);
+  
 }
 
 // an array of 8 bytes, 2 bytes for each layer
