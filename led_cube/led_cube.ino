@@ -1,7 +1,7 @@
 // *****************************************
 // Led Cube 4x4x4
-// Code for using 3 74HC595 Shift Registers
-// 2013.11.27 Levente Fall
+// Code using 3 x 74HC595 Shift Registers
+// 2013.11.27 Levente Fall (info@peregin.com)
 // *****************************************
 
 // pin connected to ST_CP of 74HC595
@@ -10,11 +10,12 @@ const int latchPin = 10;
 const int clockPin = 9;
 // pin connected to DS of 74HC595
 const int dataPin = 8;
+// PIR pin connected to the motion sensor
+const int pirPin = 4;
 
 // number of elements should be multipe of 8, representing a frame in the animation
 // each pair of bytes controls a layer
 byte frames[] = {
-  255, 255, 255, 255, 255, 255, 255, 255,
   136, 136, 136, 136, 136, 136, 136, 136,
    68,  68,  68,  68,  68,  68,  68,  68,
    34,  34,  34,  34,  34,  34,  34,  34,
@@ -27,45 +28,39 @@ byte frames[] = {
     0,   0,   0,   0,   0,   0, 240, 255,
     0,   0,   0,   0,   0,   0,   0, 255,
     0,   0,   0,   0,   0,   0,   0, 240,
-    0,   0,   0,   0,   0, 255,   0, 240,
-    0,   0, 240, 255,   0, 255,   0, 240,
-  255, 255, 240, 255,   0, 255,   0, 240
+    0,   0,   0,   0,   0,  15,   0,   0,
+    0,   0, 240,   0,   0,   0,   0,   0,
+   15,   0,   0,   0,   0,   0,   0,   0
 };
 
-// 0->3 foor each axis
-byte xyz[3] = {0, 0, 0};
+byte allOn[] = {255, 255, 255, 255, 255, 255, 255, 255};
+
 
 void setup() {
   // set pins to output so you can control the shift register
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
+  pinMode(pirPin, INPUT);
 }
 
 void loop() {
-  playTheFrames();
-  walkingLED(xyz);
-}
-
-void playTheFrames() {
   //loop the data array forever
   int n = sizeof(frames)/sizeof(byte);
   for (int i = 0; i < n; i += 8) {
-    showFrame(&frames[i]);
+    if (digitalRead(pirPin) == HIGH) {
+      showFrame(allOn);
+    } else {
+      showFrame(&frames[i]);
+    }
   }
-}
-
-void walkingLED(byte *xyz) {
-  // choose an axis
-  int now = random(0, 3);
-  
 }
 
 // an array of 8 bytes, 2 bytes for each layer
 // multiplex between the 4 layers
 void showFrame(byte *frame) {
-  for(int t = 0; t < 20; t++) {
-    for (int k = 0; k < 4; k++) {
+  for(int t = 0; t < 20; t++) { // multiplex until a giben amount of time
+    for (int k = 0; k < 4; k++) { // turn on/off the 4 layers
       byte* p1 = frame+(k*2);
       byte* p2 = p1++;
       byte layer = 1 << k; 
