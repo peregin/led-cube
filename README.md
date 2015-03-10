@@ -9,7 +9,7 @@ Lesson learned, use prototyping board only when you have a few (meaning max 5) c
 The code for triggering the LEDs in the cube is written in Sketch. Was really fun to debug hardware and software as well :)
 
 ## Schematic
-The original schematic drew by hand
+The original schematic drawn by hand
 
 ![schematic](https://raw.github.com/peregin/led-cube/master/docs/schematic-by-hand.jpg "Schematic")
 
